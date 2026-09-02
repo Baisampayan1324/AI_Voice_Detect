@@ -74,7 +74,7 @@ button { color: inherit; }
 .step.current .step-marker { border-color:#aaaeb3; color:#f0f0f1; box-shadow:0 0 22px rgba(255,255,255,.08); animation:softpulse 1.3s infinite; }
 .step.done .step-marker { background:#e2e3e4; color:#111; border-color:#e2e3e4; }
 .waveform { height:42px; display:flex; align-items:center; justify-content:center; gap:3px; overflow:hidden; opacity:.45; }
-.waveform i { width:3px; height:calc(5px + ((var(--i) * 17) % 25) * 1px); background:#9ea2a7; border-radius:5px; transform-origin:center; }
+.waveform i { width:3px; height:calc(8px + var(--i) * 1px); background:#9ea2a7; border-radius:5px; transform-origin:center; }
 .waveform.active i { animation:wave .9s ease-in-out infinite alternate; animation-delay:calc(var(--i) * -28ms); }
 
 .error { margin-top:13px; padding:11px 13px; border:1px solid #4b3c3c; background:#201718; color:#c6b8b8; border-radius:11px; font-size:12px; display:flex; align-items:center; gap:8px; }
