@@ -173,9 +173,9 @@ def main(include_release=True):
 
     datasets = [(X_real, y_real, ["original"] * len(y_real)), (X_fake, y_fake, ["original"] * len(y_fake))]
     if include_release:
-        release_dir = os.path.join(BASE_DIR, "dataset", "release_in_the_wild")
+        release_dir = os.path.join(BASE_DIR, "dataset", "mix")
         release_features, release_labels = create_release_dataset(release_dir)
-        datasets.append((release_features, release_labels, ["release_in_the_wild"] * len(release_labels)))
+        datasets.append((release_features, release_labels, ["mix"] * len(release_labels)))
 
     if any(len(features) < 2 for features, _, _ in datasets):
         print("Each class should have at least two samples for stratified splitting.")
