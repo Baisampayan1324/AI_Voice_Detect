@@ -64,5 +64,6 @@ models/*.joblib
 models/*.keras
 
 # Keep project inputs tracked unless intentionally excluded
-!dataset/
-!CODE_AND_WORKFLOW_GUIDE.md
+dataset/
+CODE_AND_WORKFLOW_GUIDE.md/
+dataset.zip
