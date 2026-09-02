@@ -1,20 +1,42 @@
 # AI Voice Detection
 
-An SVM-based application that classifies audio as likely human (`real`) or
-AI-generated (`fake`). It includes a FastAPI backend and a React/Vite frontend
-for file uploads and microphone recordings.
+An SVM-based application that classifies audio as likely human (`real`) or AI-generated (`fake`). It includes a FastAPI backend and a React/Vite frontend for file uploads and microphone recordings.
 
 ## Features
 
-- Audio classification using MFCC features and a linear SVM
-- FastAPI API with automatic model loading at startup
-- React dashboard with upload and microphone recording
-- Supported formats: WAV, MP3, M4A, FLAC, OGG, AAC, WMA, AIFF, and WEBM
-- Temporary uploads are deleted after analysis
-- Validation metrics saved to `training_metrics.json`
+* Audio classification using MFCC features and a linear SVM
+* FastAPI API with automatic model loading at startup
+* React dashboard with upload and microphone recording
+* Supported formats: WAV, MP3, M4A, FLAC, OGG, AAC, WMA, AIFF, and WEBM
+* Temporary uploads are deleted after analysis
+* Validation metrics saved to `training_metrics.json`
 
-Compressed formats and browser recordings may require FFmpeg. Install FFmpeg
-and make sure `ffmpeg` is available on your system PATH.
+Compressed formats and browser recordings may require FFmpeg. Install FFmpeg and make sure `ffmpeg` is available on your system PATH.
+
+## Dataset
+
+The complete dataset is **not included in this GitHub repository** because of its large size.
+
+You can download the complete dataset from Google Drive:
+
+**[Download AI Voice Detection Dataset](https://drive.google.com/file/d/1U7sdtoTyj0BNY7VCviJ3dZxR0hVCys0P/view?usp=sharing)**
+
+After downloading the dataset, place it in the project root using the following structure:
+
+```text
+dataset/
+├── real/
+├── fake/
+└── release_in_the_wild/
+    └── meta.csv
+```
+
+The `release_in_the_wild` dataset is labeled using `meta.csv`:
+
+* `bona-fide` → real (`0`)
+* `spoof` → fake (`1`)
+
+> **Note:** The dataset is intentionally excluded from Git tracking because of its size. Download it separately and place it inside the `dataset/` directory before training.
 
 ## Project Structure
 
@@ -46,23 +68,26 @@ cd ..
 
 ## Train the Model
 
-The default command combines all three datasets. The release dataset is
-labeled from `dataset/release_in_the_wild/meta.csv`:
+The default command combines all three datasets. The release dataset is labeled from `dataset/release_in_the_wild/meta.csv`:
 
-- `bona-fide` means real and maps to `0`
-- `spoof` means fake and maps to `1`
+* `bona-fide` means real and maps to `0`
+* `spoof` means fake and maps to `1`
 
-Training uses a stratified 50% training and 50% validation split within each
-data source. Source weighting prevents the 31,779-file release dataset from
-overwhelming the original 60 recordings.
+Training uses a stratified 50% training and 50% validation split within each data source. Source weighting prevents the 31,779-file release dataset from overwhelming the original 60 recordings.
 
 ```powershell
 python train.py
 ```
 
-The command creates or replaces `model.pkl`, `scaler.pkl`, and
-`training_metrics.json`. Full training can take a long time because it extracts
-features from every audio file.
+The command creates or replaces:
+
+```text
+model.pkl
+scaler.pkl
+training_metrics.json
+```
+
+Full training can take a long time because it extracts features from every audio file.
 
 To train only with the original folders:
 
@@ -78,9 +103,25 @@ Start from the repository root:
 uvicorn app:app --reload --host 0.0.0.0 --port 5000
 ```
 
-Check whether the model loaded at `http://localhost:5000/api/health`. The
-response should contain `"model_loaded": true`. FastAPI documentation is
-available at `http://localhost:5000/docs`.
+Check whether the model loaded at:
+
+```text
+http://localhost:5000/api/health
+```
+
+The response should contain:
+
+```json
+{
+  "model_loaded": true
+}
+```
+
+FastAPI documentation is available at:
+
+```text
+http://localhost:5000/docs
+```
 
 ## Run the Frontend
 
@@ -91,9 +132,15 @@ cd frontend
 npm run dev
 ```
 
-Open `http://localhost:5173`. Vite proxies `/api` requests to FastAPI on port 5000. The frontend supports selecting or dragging an audio file, and recording
-from the microphone. Browser recordings are created as WebM and sent to the
-same analysis endpoint.
+Open:
+
+```text
+http://localhost:5173
+```
+
+Vite proxies `/api` requests to FastAPI on port 5000.
+
+The frontend supports selecting or dragging an audio file and recording from the microphone. Browser recordings are created as WebM and sent to the same analysis endpoint.
 
 The synchronized process flow is:
 
@@ -103,8 +150,7 @@ The synchronized process flow is:
 4. Voice classification
 5. Analysis complete
 
-These stages provide client-side progress feedback while one analysis request
-is running; the backend does not stream intermediate results.
+These stages provide client-side progress feedback while one analysis request is running; the backend does not stream intermediate results.
 
 ## API
 
@@ -125,8 +171,7 @@ Example response:
 }
 ```
 
-`confidence` is the SVM probability estimate for one file. It is not the same
-as validation accuracy.
+`confidence` is the SVM probability estimate for one file. It is not the same as validation accuracy.
 
 ### `GET /api/health`
 
@@ -141,23 +186,29 @@ python predict.py
 When prompted, enter a quoted path if it contains spaces:
 
 ```text
-"P:\AIVoice-Detection\samples\Para 5(English Real Audio).wav"
+"AI_Voice_Detection\samples\Para 5(English Real Audio).wav"
 ```
 
 ## Limitations
 
-The model is trained on particular speakers, microphones, languages, and
-synthesis systems. Validation accuracy on the training sources does not
-guarantee the same accuracy on new recordings. `training_metrics.json` reports
-results separately for the original and release sources so domain shift is
-visible.
+The model is trained on particular speakers, microphones, languages, and synthesis systems. Validation accuracy on the training sources does not guarantee the same accuracy on new recordings.
+
+`training_metrics.json` reports results separately for the original and release sources so domain shift is visible.
 
 ## Docker
 
-The Dockerfile installs dependencies, trains the model during image creation,
-and starts FastAPI with Uvicorn:
+The Dockerfile installs dependencies, trains the model during image creation, and starts FastAPI with Uvicorn:
 
 ```powershell
 docker build -t ai-voice-detection .
 docker run --rm -p 5000:5000 ai-voice-detection
 ```
+
+## Dataset Download
+
+The dataset is hosted separately from the source code because of its large size.
+
+**Google Drive:**
+https://drive.google.com/file/d/1U7sdtoTyj0BNY7VCviJ3dZxR0hVCys0P/view?usp=sharing
+
+Download the dataset and place the extracted `dataset` folder in the repository root before running the training command.
