@@ -27,7 +27,7 @@ After downloading the dataset, place it in the project root using the following 
 dataset/
 ├── real/
 ├── fake/
-└── release_in_the_mix/
+└── mix/
     └── meta.csv
 ```
 
