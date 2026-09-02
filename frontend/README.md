@@ -1,4 +1,4 @@
-# VoiceCheck Frontend v2
+# VoiceCheck Frontend 
 
 A polished React/Vite frontend for the AI voice detector.
 
